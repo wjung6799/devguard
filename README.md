@@ -14,6 +14,12 @@ Add to Claude Code:
 claude mcp add devdiary -- npx devdiary
 ```
 
+That's it. On first run, devdiary automatically:
+- Adds `.devdiary/` to your `.gitignore`
+- Adds an auto-logging instruction to your `CLAUDE.md` (or `.cursorrules` if that exists)
+
+From then on, your AI writes diary entries on its own — after finishing a feature, after a big commit, before context gets lost. You never think about it. The diary just fills itself.
+
 ## Tools
 
 | Tool | What it does |
@@ -21,5 +27,7 @@ claude mcp add devdiary -- npx devdiary
 | `get_context` | Reads git branch, status, recent commits, and diffs |
 | `write_entry` | Saves a diary entry to `.devdiary/entries/` |
 | `read_entries` | Reads recent entries to catch you up |
+| `catch_me_up` | Morning briefing — diary entries + git state in one shot |
+| `setup` | Re-run setup manually if needed |
 
-Entries are markdown files stored locally in your project under `.devdiary/`.
+Entries are markdown files stored locally in your project under `.devdiary/`, one file per day. Multiple sessions and agents all append to the same daily file.

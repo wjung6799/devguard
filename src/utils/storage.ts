@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync, readdirSync, readFileSync, existsSync } from "fs";
+import { mkdirSync, writeFileSync, appendFileSync, readdirSync, readFileSync, existsSync } from "fs";
 import { join } from "path";
 
 const DIARY_DIR = ".devdiary";
@@ -17,9 +17,18 @@ export function ensureDiaryDir(projectPath: string): string {
 export function writeEntry(projectPath: string, content: string): string {
   const dir = ensureDiaryDir(projectPath);
   const now = new Date();
-  const filename = formatTimestamp(now) + ".md";
+  const filename = formatDate(now) + ".md";
   const filePath = join(dir, filename);
-  writeFileSync(filePath, content, "utf-8");
+
+  const time = formatTime(now);
+  const separator = `\n\n---\n\n<!-- session: ${time} -->\n\n`;
+
+  if (existsSync(filePath)) {
+    appendFileSync(filePath, separator + content, "utf-8");
+  } else {
+    writeFileSync(filePath, content, "utf-8");
+  }
+
   return filePath;
 }
 
@@ -36,11 +45,15 @@ export function readEntries(projectPath: string, count: number): string[] {
   return files.map((f) => readFileSync(join(dir, f), "utf-8"));
 }
 
-function formatTimestamp(date: Date): string {
+function formatDate(date: Date): string {
   const y = date.getFullYear();
   const mo = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${mo}-${d}`;
+}
+
+function formatTime(date: Date): string {
   const h = String(date.getHours()).padStart(2, "0");
   const mi = String(date.getMinutes()).padStart(2, "0");
-  return `${y}-${mo}-${d}_${h}-${mi}`;
+  return `${h}:${mi}`;
 }
