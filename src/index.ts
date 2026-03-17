@@ -3,6 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { registerGetContext } from "./tools/get-context.js";
 import { registerWriteEntry } from "./tools/write-entry.js";
 import { registerReadEntries } from "./tools/read-entries.js";
+import { registerCatchMeUp } from "./tools/catch-me-up.js";
 
 const server = new McpServer({
   name: "devdiary",
@@ -12,6 +13,7 @@ const server = new McpServer({
 registerGetContext(server);
 registerWriteEntry(server);
 registerReadEntries(server);
+registerCatchMeUp(server);
 
 async function main() {
   const transport = new StdioServerTransport();
