@@ -8,17 +8,36 @@ You vibe code for 3 hours, close your laptop, and come back the next day with no
 
 ## Install
 
-Add to Claude Code:
+### Cursor
+
+1. Register the MCP server — either **Cursor Settings → MCP → Add server**, or a project file **`.cursor/mcp.json`** at the repo root:
+
+```json
+{
+  "mcpServers": {
+    "devdiary": {
+      "command": "npx",
+      "args": ["-y", "devdiary"]
+    }
+  }
+}
+```
+
+While you’re developing this package locally, point `command` / `args` at your built server instead (for example `node` and the absolute path to `dist/index.js` after `npm run build`).
+
+2. Restart Cursor so MCP changes load.
+
+That’s it. On first run, devdiary automatically:
+- Adds `.devdiary/` to your `.gitignore`
+- Adds an auto-logging instruction to your `CLAUDE.md` (or `.cursorrules` if that exists)
+
+From then on, Cursor (or your AI) can write diary entries on its own — after finishing a feature, after a big commit, before context gets lost. You never think about it. The diary just fills itself.
+
+### Claude Code (optional)
 
 ```bash
 claude mcp add devdiary -- npx devdiary
 ```
-
-That's it. On first run, devdiary automatically:
-- Adds `.devdiary/` to your `.gitignore`
-- Adds an auto-logging instruction to your `CLAUDE.md` (or `.cursorrules` if that exists)
-
-From then on, your AI writes diary entries on its own — after finishing a feature, after a big commit, before context gets lost. You never think about it. The diary just fills itself.
 
 ## Tools
 
