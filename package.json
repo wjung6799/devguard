@@ -1,10 +1,10 @@
 {
-  "name": "devdiary",
-  "version": "0.1.0",
+  "name": "devguard",
+  "version": "0.2.0",
   "description": "MCP server that auto-generates dev diary entries from git activity",
   "license": "MIT",
   "bin": {
-    "devdiary": "./dist/index.js"
+    "devguard": "./dist/index.js"
   },
   "files": [
     "dist",
