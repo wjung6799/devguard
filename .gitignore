@@ -3,3 +3,4 @@ dist/
 .devguard/
 
 .devdiary/
+test-output/

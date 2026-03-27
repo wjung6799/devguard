@@ -9,18 +9,20 @@ export function autoSetup(projectPath: string): void {
   addInstruction(projectPath);
 }
 
-function addToGitignore(projectPath: string): void {
+/** Returns true if `.devdiary/` was added to `.gitignore`. */
+export function addToGitignore(projectPath: string): boolean {
   const gitignorePath = join(projectPath, ".gitignore");
 
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, "utf-8");
-    if (content.includes(GITIGNORE_ENTRY)) return;
+    if (content.includes(GITIGNORE_ENTRY)) return false;
     appendFileSync(gitignorePath, `\n${GITIGNORE_ENTRY}\n`, "utf-8");
   } else {
     writeFileSync(gitignorePath, `${GITIGNORE_ENTRY}\n`, "utf-8");
   }
 
   console.error(`devdiary: added ${GITIGNORE_ENTRY} to .gitignore`);
+  return true;
 }
 
 function addInstruction(projectPath: string): void {

@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { existsSync, readFileSync, writeFileSync, appendFileSync } from "fs";
 import { join } from "path";
+import { addToGitignore } from "../utils/auto-setup.js";
 
 const INSTRUCTION = `After completing a task, switching branches, or making a significant commit, call the devdiary write_entry tool to log what was done and what's next.`;
 
@@ -15,7 +16,7 @@ function hasInstruction(content: string): boolean {
 export function registerSetup(server: McpServer) {
   (server as any).tool(
     "setup",
-    "Add devdiary's auto-logging instruction to your project's CLAUDE.md or .cursorrules. Run once per project — it appends the instruction so your AI writes diary entries automatically.",
+    "Re-run setup manually if needed — same as first run: ensures `.devdiary/` is in `.gitignore` and adds the auto-logging instruction to CLAUDE.md or .cursorrules.",
     {
       project_path: z.string().describe("Absolute path to the project directory"),
       target: z
@@ -26,6 +27,8 @@ export function registerSetup(server: McpServer) {
         ),
     },
     async ({ project_path, target }: { project_path: string; target: ConfigFile | "auto" }) => {
+      const gitignoreAdded = addToGitignore(project_path);
+
       let targetFile: ConfigFile;
 
       if (target === "auto") {
@@ -47,11 +50,14 @@ export function registerSetup(server: McpServer) {
       if (existsSync(filePath)) {
         const existing = readFileSync(filePath, "utf-8");
         if (hasInstruction(existing)) {
+          const gitignoreNote = gitignoreAdded
+            ? " Added `.devdiary/` to `.gitignore`."
+            : "";
           return {
             content: [
               {
                 type: "text" as const,
-                text: `Already set up — ${targetFile} already contains the devdiary instruction.`,
+                text: `${targetFile} already contains the devdiary instruction.${gitignoreNote}`,
               },
             ],
           };
@@ -66,11 +72,17 @@ export function registerSetup(server: McpServer) {
         writeFileSync(filePath, content, "utf-8");
       }
 
+      const parts = [`Done — added devdiary instruction to ${targetFile}.`];
+      if (gitignoreAdded) {
+        parts.push("Added `.devdiary/` to `.gitignore`.");
+      }
+      parts.push("Your AI will now log diary entries automatically.");
+
       return {
         content: [
           {
             type: "text" as const,
-            text: `Done — added devdiary instruction to ${targetFile}. Your AI will now log diary entries automatically.`,
+            text: parts.join(" "),
           },
         ],
       };

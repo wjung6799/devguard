@@ -14,6 +14,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
+    "test": "mkdir -p test-output && tsx --test test/test.js test/test.strage.js --test-reporter=tap 2>&1 | tee test-output/results.tap",
     "prepublishOnly": "npm run build",
     "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts"
   },
