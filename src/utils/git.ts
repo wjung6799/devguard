@@ -39,7 +39,51 @@ export function getDiffSummary(cwd: string): string {
 export function getLocalBranches(cwd: string): string[] {
   const output = run("git branch --format='%(refname:short)'", cwd);
   if (!output) return [];
-  return output.split("\n").map((b) => b.trim()).filter(Boolean);
+  return output.split("\n").map((b) => b.trim().replace(/^'|'$/g, "")).filter(Boolean);
+}
+
+export function getBranchLastCommit(cwd: string, branch: string): string {
+  return run(`git log -1 --format="%s" "${branch}"`, cwd);
+}
+
+export function getBranchCommitCount(cwd: string, branch: string, base: string): number {
+  const output = run(`git rev-list --count "${base}..${branch}"`, cwd);
+  return parseInt(output, 10) || 0;
+}
+
+export interface CommitNode {
+  shortHash: string;
+  message: string;
+  author: string;
+  date: string;
+  timestamp: number;
+}
+
+export function getBranchCommits(cwd: string, branch: string, limit: number = 15): CommitNode[] {
+  const sep = "|||";
+  const output = run(`git log "${branch}" --format="%h${sep}%s${sep}%an${sep}%ai${sep}%at" -n ${limit}`, cwd);
+  if (!output) return [];
+  return output.split("\n").filter(Boolean).map(line => {
+    const parts = line.split(sep);
+    return {
+      shortHash: parts[0] || "",
+      message: parts[1] || "",
+      author: parts[2] || "",
+      date: parts[3] || "",
+      timestamp: parseInt(parts[4]) || 0,
+    };
+  });
+}
+
+export function getBehindCount(cwd: string, branch: string, base: string): number {
+  const output = run(`git rev-list --count "${branch}..${base}"`, cwd);
+  return parseInt(output, 10) || 0;
+}
+
+export function getFilesChangedCount(cwd: string, branch: string, base: string): number {
+  const output = run(`git diff --name-only "${base}...${branch}"`, cwd);
+  if (!output) return 0;
+  return output.split("\n").filter(Boolean).length;
 }
 
 export function getDiffFull(cwd: string): string {

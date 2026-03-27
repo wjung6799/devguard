@@ -3,6 +3,7 @@ import { z } from "zod";
 import * as git from "../utils/git.js";
 import * as storage from "../utils/storage.js";
 
+
 export function registerCatchMeUp(server: McpServer) {
   (server as any).tool(
     "catch_me_up",
@@ -16,6 +17,56 @@ export function registerCatchMeUp(server: McpServer) {
         ? git.getBranch(project_path)
         : "main";
       const isMainBranch = branch === "main" || branch === "master";
+
+      // Branch Map — visual overview of all branches
+      if (git.isGitRepo(project_path)) {
+        const gitBranches = git.getLocalBranches(project_path);
+        const branchFiles = storage.listBranchFiles(project_path);
+        const branchFileMap = new Map(branchFiles.map((b) => [b.branch, b.content]));
+
+        if (gitBranches.length > 1 || branchFiles.length > 0) {
+          const mainBranch = gitBranches.includes("main") ? "main" : "master";
+
+          const branchData = gitBranches.map((b) => {
+            const isCurrent = b === branch;
+            const isMain = b === "main" || b === "master";
+            const sanitized = b.replace(/\//g, "-");
+            const content = branchFileMap.get(sanitized);
+
+            let summary: string;
+            if (content) {
+              summary = storage.extractLatestSummary(content);
+            } else {
+              summary = git.getBranchLastCommit(project_path, b) || "Empty branch";
+            }
+
+            let status = "";
+            if (isCurrent) status = "current";
+            else if (isMain) status = "main";
+            else {
+              const ahead = git.getBranchCommitCount(project_path, b, mainBranch);
+              status = ahead > 0 ? `${ahead} ahead` : "";
+            }
+
+            return { name: b, isCurrent, isMain, summary, status };
+          });
+
+          const lines: string[] = [];
+          lines.push("## Branch Map\n");
+
+          for (const b of branchData) {
+            const marker = b.isCurrent ? "> " : b.isMain ? "  " : "  ";
+            const icon = b.isCurrent ? "[*]" : b.isMain ? "[o]" : "[-]";
+            const statusTag = b.status ? ` (${b.status})` : "";
+            const truncSummary = b.summary.length > 60
+              ? b.summary.slice(0, 57) + "..."
+              : b.summary;
+            lines.push(`${marker}${icon} **${b.name}**${statusTag} — ${truncSummary}`);
+          }
+
+          parts.push(lines.join("\n"));
+        }
+      }
 
       // If on a feature branch, show its log first
       if (!isMainBranch) {

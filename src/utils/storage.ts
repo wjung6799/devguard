@@ -102,6 +102,71 @@ export function listBranchFiles(projectPath: string): { branch: string; content:
     }));
 }
 
+export function extractLatestSummary(content: string): string {
+  // Find the last "summary:" line in frontmatter
+  const summaryMatches = [...content.matchAll(/^summary:\s*"?(.+?)"?\s*$/gm)];
+  if (summaryMatches.length > 0) {
+    return summaryMatches[summaryMatches.length - 1][1];
+  }
+  // Fallback: grab the first heading after the last separator
+  const lastSep = content.lastIndexOf("---\n");
+  const tail = lastSep >= 0 ? content.slice(lastSep) : content;
+  const headingMatch = tail.match(/^#+ (.+)$/m);
+  if (headingMatch) return headingMatch[1];
+  return "No summary available";
+}
+
+// --- Diary entry parsing ---
+
+export interface DiaryEntry {
+  title: string;
+  summary: string;
+  date: string;
+  whatChanged: string[];
+  decisions: string[];
+  issues: string[];
+  nextSteps: string[];
+}
+
+export function parseDiaryEntries(content: string): DiaryEntry[] {
+  // Split on frontmatter separators (--- blocks)
+  const blocks = content.split(/\n---\n/).filter(b => b.trim());
+  const entries: DiaryEntry[] = [];
+
+  for (const block of blocks) {
+    const summaryMatch = block.match(/^summary:\s*"?(.+?)"?\s*$/m);
+    const dateMatch = block.match(/^date:\s*(.+)$/m);
+    const titleMatch = block.match(/^#+ (.+)$/m);
+
+    if (!titleMatch && !summaryMatch) continue;
+
+    const entry: DiaryEntry = {
+      title: titleMatch?.[1] || summaryMatch?.[1] || "",
+      summary: summaryMatch?.[1] || titleMatch?.[1] || "",
+      date: dateMatch?.[1] || "",
+      whatChanged: extractSection(block, "What Changed"),
+      decisions: extractSection(block, "Decisions"),
+      issues: extractSection(block, "Issues"),
+      nextSteps: extractSection(block, "Next Steps"),
+    };
+
+    if (entry.title) entries.push(entry);
+  }
+
+  return entries;
+}
+
+function extractSection(block: string, heading: string): string[] {
+  const regex = new RegExp(`## ${heading}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`, "m");
+  const match = block.match(regex);
+  if (!match) return [];
+
+  const text = match[1].trim();
+  // Split by bullet points or newlines
+  const lines = text.split(/\n/).map(l => l.replace(/^[-*]\s+/, "").trim()).filter(Boolean);
+  return lines;
+}
+
 // --- Helpers ---
 
 function formatDate(date: Date): string {
