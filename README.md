@@ -29,6 +29,7 @@ From then on, your AI writes diary entries on its own — after finishing a feat
 | `read_entries` | Reads recent entries to catch you up |
 | `catch_me_up` | Morning briefing — diary entries + git state + branch map in one shot |
 | `branch_map` | Opens a visual branch map in your browser |
+| `daily_view` | Opens a calendar dashboard showing diary entries by date |
 | `setup` | Re-run setup manually if needed |
 
 ## Branch Map
@@ -42,6 +43,16 @@ Run `branch_map` to open an interactive HTML visualization of your repo in the b
 - **Auto-generated summaries** for commits without diary entries — categorized by type (Feature, Fix, Refactor, etc.) with affected areas and change scale
 
 Designed for people who don't want to think about git.
+
+## Daily View
+
+Run `daily_view` to open a calendar dashboard in your browser. It pulls diary entries from all branches and displays them on a monthly grid:
+
+- **Entry badges** on each day showing how many entries were logged
+- **Click any day** to expand and see full details — what changed, decisions, issues, next steps
+- **Keyboard navigation** — arrow keys to switch months, Escape to close the detail panel
+
+A quick way to see your work history at a glance.
 
 ## Branch-Aware Diary
 
@@ -62,3 +73,7 @@ Entries are markdown files stored locally in your project under `.devguard/`. Ea
 - **Commit hash** — links the entry to a specific commit for traceability
 
 Multiple sessions and agents all append to the same file. The diary builds up over time, making summaries richer and the branch map more useful with every session.
+
+## Contact
+
+Join the Discord for questions, feedback, or feature requests: https://discord.gg/BrzRHHzjFQ
