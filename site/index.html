@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>devguard — Never lose context between sessions</title>
+  <meta name="description" content="MCP server that keeps a dev diary for you. What changed, what broke, what's next. Picks up where you left off.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">devguard</a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#install">Install</a>
+        <a href="https://discord.gg/BrzRHHzjFQ" target="_blank" rel="noopener">Discord</a>
+        <a href="https://github.com/wjung6799/devguard" target="_blank" rel="noopener" class="btn btn-small">GitHub</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <p class="hero-badge">MCP Server for Claude Code</p>
+      <h1>Never lose context<br>between sessions</h1>
+      <p class="hero-sub">You vibe code for 3 hours, close your laptop, and come back the next day with no idea what you were doing. <strong>devguard</strong> fixes that.</p>
+      <div class="hero-actions">
+        <a href="#install" class="btn btn-primary">Get Started</a>
+        <a href="#features" class="btn btn-secondary">See Features</a>
+      </div>
+      <div class="hero-install">
+        <code>claude mcp add devguard -- npx devguard</code>
+        <button class="copy-btn" data-copy="claude mcp add devguard -- npx devguard" aria-label="Copy to clipboard">Copy</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="features" id="features">
+    <div class="container">
+      <h2>What it does</h2>
+      <p class="section-sub">devguard reads your git state, tracks your branches, and writes diary entries automatically. You never think about it.</p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">&#128218;</div>
+          <h3>Auto Diary</h3>
+          <p>Your AI writes diary entries on its own after finishing a feature, after a big commit, before context gets lost.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#127775;</div>
+          <h3>Morning Briefing</h3>
+          <p><code>catch_me_up</code> gives you diary entries, git state, and a branch map in one shot. Start your day with full context.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#127860;</div>
+          <h3>Branch Map</h3>
+          <p>Interactive HTML visualization of your repo. All branches, status, diary summaries, and a commit navigator.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128197;</div>
+          <h3>Daily View</h3>
+          <p>Calendar dashboard showing diary entries by date. Click any day to see full details of what happened.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128268;</div>
+          <h3>Branch-Aware</h3>
+          <p>Entries are routed by branch automatically. Feature branches get their own file. Main gets daily logs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9889;</div>
+          <h3>Zero Config</h3>
+          <p>One command to install. Auto-configures gitignore and instructions. The diary fills itself from day one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Install with one command</h3>
+            <p>Add devguard to Claude Code. It auto-configures your project on first run.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Code as usual</h3>
+            <p>Your AI agent writes diary entries automatically as you work. What changed, decisions made, issues hit, next steps.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Pick up where you left off</h3>
+            <p>Next session, <code>catch_me_up</code> gives you the full picture. Branch state, recent changes, and what to do next.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools-section" id="tools">
+    <div class="container">
+      <h2>Tools</h2>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <code>get_context</code>
+          <p>Reads git branch, status, recent commits, and diffs</p>
+        </div>
+        <div class="tool-card">
+          <code>write_entry</code>
+          <p>Saves a diary entry with what changed, decisions, issues, and next steps</p>
+        </div>
+        <div class="tool-card">
+          <code>read_entries</code>
+          <p>Reads recent entries to catch you up</p>
+        </div>
+        <div class="tool-card">
+          <code>catch_me_up</code>
+          <p>Morning briefing — diary + git state + branch map in one shot</p>
+        </div>
+        <div class="tool-card">
+          <code>branch_map</code>
+          <p>Opens a visual branch map in your browser</p>
+        </div>
+        <div class="tool-card">
+          <code>daily_view</code>
+          <p>Opens a calendar dashboard showing entries by date</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="install-section" id="install">
+    <div class="container">
+      <h2>Get started in 10 seconds</h2>
+      <div class="install-block">
+        <div class="install-step">
+          <p>Add to Claude Code:</p>
+          <div class="code-block">
+            <code>claude mcp add devguard -- npx devguard</code>
+            <button class="copy-btn" data-copy="claude mcp add devguard -- npx devguard" aria-label="Copy to clipboard">Copy</button>
+          </div>
+        </div>
+        <p class="install-note">That's it. devguard auto-configures your project on first run.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>devguard &mdash; open source, MIT licensed</p>
+      <div class="footer-links">
+        <a href="https://github.com/wjung6799/devguard" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://discord.gg/BrzRHHzjFQ" target="_blank" rel="noopener">Discord</a>
+        <a href="https://www.npmjs.com/package/devguard" target="_blank" rel="noopener">npm</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
