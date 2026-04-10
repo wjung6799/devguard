@@ -50,11 +50,13 @@ export function registerGetRules(server: McpServer) {
         .map((r, i) => `### Rule ${i + 1}: ${r.title}\n${r.content}`)
         .join("\n\n---\n\n");
 
+      const cachedNote = result.cached ? " (from cache — platform unreachable)" : "";
+
       return {
         content: [
           {
             type: "text" as const,
-            text: `# Your Rules (${rules.length})\n\n${formatted}`,
+            text: `# Your Rules (${rules.length})${cachedNote}\n\n${formatted}`,
           },
         ],
       };

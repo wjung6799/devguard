@@ -13,7 +13,7 @@ export default async function DashboardPage() {
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" },
     include: {
-      _count: { select: { pages: true, notes: true } },
+      _count: { select: { pages: true, notes: true, entries: true } },
     },
   });
 
@@ -23,10 +23,22 @@ export default async function DashboardPage() {
         <h1 className="text-xl font-bold">Dev Diary</h1>
         <div className="flex items-center gap-4">
           <Link
+            href="/search"
+            className="text-sm text-gray-400 hover:text-white transition"
+          >
+            Search
+          </Link>
+          <Link
             href="/rules"
             className="text-sm text-gray-400 hover:text-white transition"
           >
             Rules
+          </Link>
+          <Link
+            href="/settings"
+            className="text-sm text-gray-400 hover:text-white transition"
+          >
+            Settings
           </Link>
           {!user.isPaid && active && (
             <span className="text-sm text-yellow-400">
@@ -85,7 +97,8 @@ export default async function DashboardPage() {
                     <h3 className="text-lg font-medium">{project.name}</h3>
                     <p className="text-sm text-gray-500 mt-1">
                       {project._count.pages} wiki pages &middot;{" "}
-                      {project._count.notes} notes
+                      {project._count.notes} notes &middot;{" "}
+                      {project._count.entries} diary entries
                     </p>
                   </Link>
                 ))}

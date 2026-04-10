@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import RuleCard from "@/app/components/RuleCard";
 
 async function createRuleAction(formData: FormData) {
   "use server";
@@ -97,28 +98,16 @@ export default async function RulesPage() {
         ) : (
           <div className="space-y-4">
             {rules.map((rule) => (
-              <div
+              <RuleCard
                 key={rule.id}
-                className="bg-gray-900 border border-gray-800 rounded-lg p-5"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-lg">{rule.title}</h3>
-                    <pre className="text-gray-400 text-sm mt-2 whitespace-pre-wrap font-sans">
-                      {rule.content}
-                    </pre>
-                    <p className="text-xs text-gray-600 mt-3">
-                      Added {rule.createdAt.toLocaleDateString()}
-                    </p>
-                  </div>
-                  <form action={deleteRuleAction}>
-                    <input type="hidden" name="id" value={rule.id} />
-                    <button className="text-sm text-red-400 hover:text-red-300 transition">
-                      Delete
-                    </button>
-                  </form>
-                </div>
-              </div>
+                rule={{
+                  id: rule.id,
+                  title: rule.title,
+                  content: rule.content,
+                  createdAt: rule.createdAt.toISOString(),
+                }}
+                deleteAction={deleteRuleAction}
+              />
             ))}
           </div>
         )}

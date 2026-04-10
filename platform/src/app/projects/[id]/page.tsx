@@ -4,17 +4,27 @@ import {
   createWikiPageAction,
   createNoteAction,
   deleteProjectAction,
+  deleteEntryAction,
 } from "@/lib/actions";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
+import Markdown from "@/app/components/Markdown";
+import EntryFilters from "@/app/components/EntryFilters";
+import Pagination from "@/app/components/Pagination";
+
+const ENTRIES_PER_PAGE = 50;
 
 export default async function ProjectPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ branch?: string; from?: string; to?: string; page?: string }>;
 }) {
   const session = await requireAuth();
   const { id } = await params;
+  const filters = await searchParams;
 
   if (!isTrialActive(session.user)) redirect("/dashboard");
 
@@ -23,11 +33,46 @@ export default async function ProjectPage({
     include: {
       pages: { orderBy: { updatedAt: "desc" } },
       notes: { orderBy: { updatedAt: "desc" } },
-      entries: { orderBy: { date: "desc" }, take: 20 },
     },
   });
 
   if (!project) notFound();
+
+  // Get distinct branches for filter dropdown
+  const branchRows = await prisma.diaryEntry.findMany({
+    where: { projectId: id },
+    select: { branch: true },
+    distinct: ["branch"],
+    orderBy: { branch: "asc" },
+  });
+  const branches = branchRows.map((r) => r.branch);
+
+  // Build entry query with filters
+  const entryWhere: Record<string, unknown> = { projectId: id };
+  if (filters.branch) entryWhere.branch = filters.branch;
+  if (filters.from || filters.to) {
+    entryWhere.date = {
+      ...(filters.from ? { gte: new Date(filters.from) } : {}),
+      ...(filters.to ? { lte: new Date(filters.to + "T23:59:59") } : {}),
+    };
+  }
+
+  // Get last synced time
+  const lastEntry = await prisma.diaryEntry.findFirst({
+    where: { projectId: id },
+    orderBy: { createdAt: "desc" },
+    select: { createdAt: true },
+  });
+
+  const page = Math.max(1, parseInt(filters.page || "1", 10));
+  const totalEntries = await prisma.diaryEntry.count({ where: entryWhere });
+  const totalPages = Math.max(1, Math.ceil(totalEntries / ENTRIES_PER_PAGE));
+  const entries = await prisma.diaryEntry.findMany({
+    where: entryWhere,
+    orderBy: { date: "desc" },
+    skip: (page - 1) * ENTRIES_PER_PAGE,
+    take: ENTRIES_PER_PAGE,
+  });
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -37,6 +82,11 @@ export default async function ProjectPage({
             &larr; Back
           </Link>
           <h1 className="text-xl font-bold">{project.name}</h1>
+          {lastEntry && (
+            <span className="text-xs text-gray-500">
+              Last synced: {lastEntry.createdAt.toLocaleString()}
+            </span>
+          )}
         </div>
         <form action={deleteProjectAction}>
           <input type="hidden" name="id" value={project.id} />
@@ -130,45 +180,77 @@ export default async function ProjectPage({
         </div>
 
         {/* Diary Entries */}
-        {project.entries.length > 0 && (
-          <section className="mt-10">
-            <h2 className="text-lg font-semibold mb-4">Diary Entries</h2>
-            <div className="space-y-3">
-              {project.entries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="bg-gray-900 border border-gray-800 rounded-lg p-4"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-xs font-mono text-gray-500">
-                      {entry.date.toLocaleDateString()}
-                    </span>
-                    <span className="text-xs px-2 py-0.5 bg-gray-800 rounded text-gray-400">
-                      {entry.branch}
-                    </span>
-                    {entry.commit && (
-                      <span className="text-xs font-mono text-gray-600">
-                        {entry.commit.slice(0, 7)}
-                      </span>
-                    )}
-                    <span className="text-xs text-gray-700">
-                      {entry.source}
-                    </span>
+        <section className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">
+              Diary Entries
+              <span className="text-sm font-normal text-gray-500 ml-2">
+                ({totalEntries})
+              </span>
+            </h2>
+          </div>
+
+          <Suspense>
+            <EntryFilters branches={branches} />
+          </Suspense>
+
+          {entries.length === 0 ? (
+            <p className="text-gray-500 text-sm">
+              {totalEntries === 0
+                ? "No diary entries yet. Entries will appear here when synced from the CLI."
+                : "No entries match the current filters."}
+            </p>
+          ) : (
+            <>
+              <div className="space-y-3">
+                {entries.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-mono text-gray-500">
+                          {entry.date.toLocaleDateString()}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 bg-gray-800 rounded text-gray-400">
+                          {entry.branch}
+                        </span>
+                        {entry.commit && (
+                          <span className="text-xs font-mono text-gray-600">
+                            {entry.commit.slice(0, 7)}
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-700">
+                          {entry.source}
+                        </span>
+                      </div>
+                      <form action={deleteEntryAction}>
+                        <input type="hidden" name="id" value={entry.id} />
+                        <input type="hidden" name="projectId" value={project.id} />
+                        <button className="text-xs text-red-400/60 hover:text-red-300 transition">
+                          Delete
+                        </button>
+                      </form>
+                    </div>
+                    <h3 className="font-medium">{entry.summary}</h3>
+                    <details className="mt-2">
+                      <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-300 transition">
+                        Show full entry
+                      </summary>
+                      <div className="mt-2">
+                        <Markdown content={entry.content} />
+                      </div>
+                    </details>
                   </div>
-                  <h3 className="font-medium">{entry.summary}</h3>
-                  <details className="mt-2">
-                    <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-300 transition">
-                      Show full entry
-                    </summary>
-                    <pre className="text-sm text-gray-400 mt-2 whitespace-pre-wrap font-sans leading-relaxed">
-                      {entry.content}
-                    </pre>
-                  </details>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                ))}
+              </div>
+              <Suspense>
+                <Pagination currentPage={page} totalPages={totalPages} />
+              </Suspense>
+            </>
+          )}
+        </section>
       </main>
     </div>
   );

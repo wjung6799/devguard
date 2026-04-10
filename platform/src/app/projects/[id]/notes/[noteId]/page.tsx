@@ -1,8 +1,9 @@
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { updateNoteAction } from "@/lib/actions";
+import { updateNoteAction, deleteNoteAction } from "@/lib/actions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Markdown from "@/app/components/Markdown";
 
 export default async function NoteDetail({
   params,
@@ -20,10 +21,16 @@ export default async function NoteDetail({
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      <header className="border-b border-gray-800 px-6 py-4">
+      <header className="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
         <Link href={`/projects/${id}`} className="text-gray-400 hover:text-white transition">
           &larr; Back to project
         </Link>
+        <form action={deleteNoteAction}>
+          <input type="hidden" name="id" value={note.id} />
+          <button className="text-sm text-red-400 hover:text-red-300 transition">
+            Delete Note
+          </button>
+        </form>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-10">
@@ -49,6 +56,13 @@ export default async function NoteDetail({
             Save
           </button>
         </form>
+
+        {note.content && (
+          <div className="mt-10 border-t border-gray-800 pt-8">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Preview</h2>
+            <Markdown content={note.content} />
+          </div>
+        )}
       </main>
     </div>
   );

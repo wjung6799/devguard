@@ -79,7 +79,7 @@ export function registerWriteEntry(server: McpServer) {
       // Sync to platform if configured
       let syncStatus = "";
       if (isConfigured()) {
-        const projectName = project_path.split("/").pop() || "unknown";
+        const projectName = git.getProjectName(project_path);
         const result = await syncEntry(projectName, {
           date: now,
           branch,

@@ -1,4 +1,6 @@
 import { execSync } from "child_process";
+import { readFileSync, existsSync } from "fs";
+import { join, basename, resolve } from "path";
 
 function run(cmd: string, cwd: string): string {
   try {
@@ -112,6 +114,23 @@ export function getCommitBody(cwd: string, hash: string): string {
 
 export function getCommitDiffSummary(cwd: string, hash: string): string {
   return run(`git diff-tree --no-commit-id --stat -r "${hash}"`, cwd);
+}
+
+export function getProjectName(projectPath: string): string {
+  // Try package.json name first
+  try {
+    const pkgPath = join(projectPath, "package.json");
+    if (existsSync(pkgPath)) {
+      const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+      if (pkg.name && typeof pkg.name === "string") {
+        return pkg.name.replace(/^@[^/]+\//, ""); // strip scope
+      }
+    }
+  } catch {
+    // fall through
+  }
+
+  return basename(resolve(projectPath));
 }
 
 export function getHeadCommitHash(cwd: string): string {

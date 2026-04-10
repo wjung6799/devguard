@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
 
 const CONFIG_DIR = join(
@@ -6,6 +6,7 @@ const CONFIG_DIR = join(
   ".devguard"
 );
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
+const RULES_CACHE_FILE = join(CONFIG_DIR, "rules-cache.json");
 
 interface Config {
   apiKey: string;
@@ -36,6 +37,25 @@ interface SyncEntry {
   source?: string;
 }
 
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (i < retries - 1) {
+        await new Promise((r) => setTimeout(r, baseDelay * Math.pow(2, i)));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export async function syncEntry(
   projectName: string,
   entry: SyncEntry
@@ -44,19 +64,21 @@ export async function syncEntry(
   if (!config) return { ok: false, error: "Not configured" };
 
   try {
-    const res = await fetch(`${config.apiUrl}/api/sync/entries`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${config.apiKey}`,
-      },
-      body: JSON.stringify({ projectName, entry }),
+    const res = await withRetry(async () => {
+      const r = await fetch(`${config.apiUrl}/api/sync/entries`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${config.apiKey}`,
+        },
+        body: JSON.stringify({ projectName, entry }),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        throw new Error(data.error || `HTTP ${r.status}`);
+      }
+      return r;
     });
-
-    if (!res.ok) {
-      const data = await res.json();
-      return { ok: false, error: data.error || `HTTP ${res.status}` };
-    }
 
     return { ok: true };
   } catch (err: unknown) {
@@ -95,7 +117,27 @@ export async function syncImport(
   }
 }
 
-export async function fetchRules(): Promise<{ ok: boolean; rules?: Array<{ id: string; title: string; content: string }>; error?: string }> {
+type RuleItem = { id: string; title: string; content: string };
+
+function cacheRules(rules: RuleItem[]): void {
+  try {
+    if (!existsSync(CONFIG_DIR)) mkdirSync(CONFIG_DIR, { recursive: true });
+    writeFileSync(RULES_CACHE_FILE, JSON.stringify(rules), "utf-8");
+  } catch {
+    // best-effort cache
+  }
+}
+
+function getCachedRules(): RuleItem[] | null {
+  try {
+    if (!existsSync(RULES_CACHE_FILE)) return null;
+    return JSON.parse(readFileSync(RULES_CACHE_FILE, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchRules(): Promise<{ ok: boolean; rules?: RuleItem[]; error?: string; cached?: boolean }> {
   const config = getConfig();
   if (!config) return { ok: false, error: "Not configured" };
 
@@ -107,13 +149,19 @@ export async function fetchRules(): Promise<{ ok: boolean; rules?: Array<{ id: s
     });
 
     if (!res.ok) {
-      const data = await res.json();
-      return { ok: false, error: data.error || `HTTP ${res.status}` };
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `HTTP ${res.status}`);
     }
 
     const data = await res.json();
+    cacheRules(data.rules);
     return { ok: true, rules: data.rules };
   } catch (err: unknown) {
+    // Fall back to cached rules
+    const cached = getCachedRules();
+    if (cached) {
+      return { ok: true, rules: cached, cached: true };
+    }
     const message = err instanceof Error ? err.message : String(err);
     return { ok: false, error: message };
   }

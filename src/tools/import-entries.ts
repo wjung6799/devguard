@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import * as storage from "../utils/storage.js";
+import * as git from "../utils/git.js";
 import { isConfigured, syncImport } from "../utils/sync.js";
 
 export function registerImportEntries(server: McpServer) {
@@ -26,7 +27,7 @@ export function registerImportEntries(server: McpServer) {
         };
       }
 
-      const name = project_name || project_path.split("/").pop() || "unknown";
+      const name = project_name || git.getProjectName(project_path);
 
       // Collect all entries from main stem
       const mainEntries = storage.readEntries(project_path, 1000);

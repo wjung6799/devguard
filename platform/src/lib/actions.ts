@@ -183,3 +183,72 @@ export async function deleteProjectAction(formData: FormData) {
 
   redirect("/dashboard");
 }
+
+export async function deleteWikiPageAction(formData: FormData) {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const id = formData.get("id") as string;
+  const page = await prisma.wikiPage.findUnique({ where: { id } });
+  if (!page) return;
+
+  await prisma.wikiPage.delete({ where: { id } });
+  redirect(`/projects/${page.projectId}`);
+}
+
+export async function deleteNoteAction(formData: FormData) {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const id = formData.get("id") as string;
+  const note = await prisma.note.findUnique({ where: { id } });
+  if (!note) return;
+
+  await prisma.note.delete({ where: { id } });
+  redirect(`/projects/${note.projectId}`);
+}
+
+export async function deleteEntryAction(formData: FormData) {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const id = formData.get("id") as string;
+  const projectId = formData.get("projectId") as string;
+
+  const entry = await prisma.diaryEntry.findUnique({ where: { id } });
+  if (!entry) return;
+
+  // Verify ownership through project
+  const project = await prisma.project.findUnique({ where: { id: entry.projectId } });
+  if (!project || project.userId !== session.userId) return;
+
+  await prisma.diaryEntry.delete({ where: { id } });
+  redirect(`/projects/${projectId}`);
+}
+
+export async function createApiKeyAction(formData: FormData) {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const name = (formData.get("name") as string) || "default";
+  const key = `dg_${crypto.randomBytes(24).toString("hex")}`;
+
+  await prisma.apiKey.create({
+    data: { key, name, userId: session.userId },
+  });
+
+  redirect("/settings");
+}
+
+export async function deleteApiKeyAction(formData: FormData) {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const id = formData.get("id") as string;
+  const apiKey = await prisma.apiKey.findUnique({ where: { id } });
+  if (apiKey && apiKey.userId === session.userId) {
+    await prisma.apiKey.delete({ where: { id } });
+  }
+
+  redirect("/settings");
+}
