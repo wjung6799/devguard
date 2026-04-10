@@ -20,6 +20,26 @@ That's it. On first run, devguard automatically:
 
 From then on, your AI writes diary entries on its own — after finishing a feature, after a big commit, before context gets lost. You never think about it. The diary just fills itself.
 
+## Cloud Sync (Optional)
+
+Connect to the Dev Diary platform to browse, search, and manage your diary from any browser:
+
+```bash
+npx devguard init
+```
+
+This opens your browser to log in, then saves your API key locally. After that, every diary entry auto-syncs to the cloud. You can also bulk-import your existing entries:
+
+```bash
+# Or use the import_entries MCP tool
+```
+
+The platform gives you:
+- Markdown-rendered diary entries with branch filtering and search
+- Wiki pages and notes per project
+- Rules that get loaded into your AI assistant's context
+- API key management
+
 ## Tools
 
 | Tool | What it does |
@@ -28,9 +48,20 @@ From then on, your AI writes diary entries on its own — after finishing a feat
 | `write_entry` | Saves a diary entry with what changed, decisions, issues, and next steps |
 | `read_entries` | Reads recent entries to catch you up |
 | `catch_me_up` | Morning briefing — diary entries + git state + branch map in one shot |
+| `search_entries` | Search diary entries by keyword or date range |
+| `import_entries` | Bulk-import all local `.devguard/` entries to the cloud platform |
+| `get_rules` | Fetch your rules from the platform for AI context |
 | `branch_map` | Opens a visual branch map in your browser |
 | `daily_view` | Opens a calendar dashboard showing diary entries by date |
 | `setup` | Re-run setup manually if needed |
+
+## CLI Commands
+
+| Command | What it does |
+|---------|-------------|
+| `devguard` | Starts the MCP server (default) |
+| `devguard init` | Connect to the Dev Diary platform (opens browser login) |
+| `devguard status` | Show current config (email, API URL) |
 
 ## Branch Map
 
@@ -73,6 +104,8 @@ Entries are markdown files stored locally in your project under `.devguard/`. Ea
 - **Commit hash** — links the entry to a specific commit for traceability
 
 Multiple sessions and agents all append to the same file. The diary builds up over time, making summaries richer and the branch map more useful with every session.
+
+When connected to the platform, entries sync automatically after each write — no extra steps needed.
 
 ## Contact
 

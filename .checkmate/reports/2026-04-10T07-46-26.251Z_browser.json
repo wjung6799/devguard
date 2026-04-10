@@ -1,0 +1,340 @@
+{
+  "name": "Register + Login Flow",
+  "description": "Register a new user and verify dashboard loads after auth",
+  "iteration": 2,
+  "total": 3,
+  "passed": 1,
+  "failed": 2,
+  "duration_ms": 4512,
+  "results": [
+    {
+      "name": "Redirects to dashboard after register",
+      "purpose": "Verify auth flow completes",
+      "pass": false,
+      "expected": "URL contains \"/dashboard\"",
+      "actual": "http://localhost:3000/register",
+      "steps": [
+        {
+          "type": "navigate",
+          "description": "Navigate to http://localhost:3000/register",
+          "status": "passed",
+          "duration_ms": 126,
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s0.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait for \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 24,
+          "action": "wait",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s1.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"Test User\" into \"input[name='name']\"",
+          "status": "passed",
+          "duration_ms": 563,
+          "action": "type",
+          "selector": "input[name='name']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s2.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"test2@example.com\" into \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 558,
+          "action": "type",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s3.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"testpass123\" into \"input[name='password']\"",
+          "status": "passed",
+          "duration_ms": 39,
+          "action": "type",
+          "selector": "input[name='password']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s4.png"
+        },
+        {
+          "type": "setup",
+          "description": "Click on \"button[type='submit']\"",
+          "status": "passed",
+          "duration_ms": 42,
+          "action": "click",
+          "selector": "button[type='submit']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s5.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait 3000ms",
+          "status": "passed",
+          "duration_ms": 3062,
+          "action": "wait_ms",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s6.png"
+        },
+        {
+          "type": "assertion",
+          "description": "Redirects to dashboard after register",
+          "status": "failed",
+          "duration_ms": 36,
+          "expected": "URL contains \"/dashboard\"",
+          "actual": "http://localhost:3000/register",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r0_s7.png"
+        }
+      ],
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_result_0.png"
+    },
+    {
+      "name": "Dashboard page renders",
+      "purpose": "Page loads without crash",
+      "pass": true,
+      "expected": "element exists",
+      "actual": "found",
+      "steps": [
+        {
+          "type": "navigate",
+          "description": "Navigate to http://localhost:3000/register",
+          "status": "passed",
+          "duration_ms": 126,
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s0.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait for \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 24,
+          "action": "wait",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s1.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"Test User\" into \"input[name='name']\"",
+          "status": "passed",
+          "duration_ms": 563,
+          "action": "type",
+          "selector": "input[name='name']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s2.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"test2@example.com\" into \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 558,
+          "action": "type",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s3.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"testpass123\" into \"input[name='password']\"",
+          "status": "passed",
+          "duration_ms": 39,
+          "action": "type",
+          "selector": "input[name='password']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s4.png"
+        },
+        {
+          "type": "setup",
+          "description": "Click on \"button[type='submit']\"",
+          "status": "passed",
+          "duration_ms": 42,
+          "action": "click",
+          "selector": "button[type='submit']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s5.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait 3000ms",
+          "status": "passed",
+          "duration_ms": 3062,
+          "action": "wait_ms",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s6.png"
+        },
+        {
+          "type": "assertion",
+          "description": "Dashboard page renders",
+          "status": "passed",
+          "duration_ms": 30,
+          "expected": "element exists",
+          "actual": "found",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r1_s7.png"
+        }
+      ]
+    },
+    {
+      "name": "No console errors on dashboard",
+      "purpose": "No runtime errors after login",
+      "pass": false,
+      "expected": "no console errors",
+      "actual": "2 error(s): Failed to load resource: the server responded with a status of 500 (Internal Server Error); DriverAdapterError: SQLITE_ERROR: no such table: main.User",
+      "steps": [
+        {
+          "type": "navigate",
+          "description": "Navigate to http://localhost:3000/register",
+          "status": "passed",
+          "duration_ms": 126,
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s0.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait for \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 24,
+          "action": "wait",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s1.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"Test User\" into \"input[name='name']\"",
+          "status": "passed",
+          "duration_ms": 563,
+          "action": "type",
+          "selector": "input[name='name']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s2.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"test2@example.com\" into \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 558,
+          "action": "type",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s3.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"testpass123\" into \"input[name='password']\"",
+          "status": "passed",
+          "duration_ms": 39,
+          "action": "type",
+          "selector": "input[name='password']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s4.png"
+        },
+        {
+          "type": "setup",
+          "description": "Click on \"button[type='submit']\"",
+          "status": "passed",
+          "duration_ms": 42,
+          "action": "click",
+          "selector": "button[type='submit']",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s5.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait 3000ms",
+          "status": "passed",
+          "duration_ms": 3062,
+          "action": "wait_ms",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s6.png"
+        },
+        {
+          "type": "assertion",
+          "description": "No console errors on dashboard",
+          "status": "failed",
+          "duration_ms": 27,
+          "expected": "no console errors",
+          "actual": "2 error(s): Failed to load resource: the server responded with a status of 500 (Internal Server Error); DriverAdapterError: SQLITE_ERROR: no such table: main.User",
+          "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_r2_s7.png"
+        }
+      ],
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_result_2.png"
+    }
+  ],
+  "steps": [
+    {
+      "type": "navigate",
+      "description": "Navigate to http://localhost:3000/register",
+      "status": "passed",
+      "duration_ms": 126,
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_0.png"
+    },
+    {
+      "type": "setup",
+      "description": "Wait for \"input[name='email']\"",
+      "status": "passed",
+      "duration_ms": 24,
+      "action": "wait",
+      "selector": "input[name='email']",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_1.png"
+    },
+    {
+      "type": "setup",
+      "description": "Type \"Test User\" into \"input[name='name']\"",
+      "status": "passed",
+      "duration_ms": 563,
+      "action": "type",
+      "selector": "input[name='name']",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_2.png"
+    },
+    {
+      "type": "setup",
+      "description": "Type \"test2@example.com\" into \"input[name='email']\"",
+      "status": "passed",
+      "duration_ms": 558,
+      "action": "type",
+      "selector": "input[name='email']",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_3.png"
+    },
+    {
+      "type": "setup",
+      "description": "Type \"testpass123\" into \"input[name='password']\"",
+      "status": "passed",
+      "duration_ms": 39,
+      "action": "type",
+      "selector": "input[name='password']",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_4.png"
+    },
+    {
+      "type": "setup",
+      "description": "Click on \"button[type='submit']\"",
+      "status": "passed",
+      "duration_ms": 42,
+      "action": "click",
+      "selector": "button[type='submit']",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_5.png"
+    },
+    {
+      "type": "setup",
+      "description": "Wait 3000ms",
+      "status": "passed",
+      "duration_ms": 3062,
+      "action": "wait_ms",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_6.png"
+    },
+    {
+      "type": "assertion",
+      "description": "Redirects to dashboard after register",
+      "status": "failed",
+      "duration_ms": 36,
+      "expected": "URL contains \"/dashboard\"",
+      "actual": "http://localhost:3000/register",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_7.png"
+    },
+    {
+      "type": "assertion",
+      "description": "Dashboard page renders",
+      "status": "passed",
+      "duration_ms": 30,
+      "expected": "element exists",
+      "actual": "found",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_8.png"
+    },
+    {
+      "type": "assertion",
+      "description": "No console errors on dashboard",
+      "status": "failed",
+      "duration_ms": 27,
+      "expected": "no console errors",
+      "actual": "2 error(s): Failed to load resource: the server responded with a status of 500 (Internal Server Error); DriverAdapterError: SQLITE_ERROR: no such table: main.User",
+      "screenshot_path": "screenshots/2026-04-10T07-46-26.251Z_browser_step_9.png"
+    }
+  ],
+  "url": "http://localhost:3000/register",
+  "test_spec_file": "register-login-flow_ac31eecf8a.json",
+  "test_type": "browser",
+  "saved_at": "2026-04-10T07:46:26.252Z"
+}

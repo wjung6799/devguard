@@ -1,0 +1,61 @@
+{
+  "type": "browser",
+  "url": "http://localhost:3000/login",
+  "name": "Login Flow - Focus+Type",
+  "description": "Login with focus then type approach",
+  "setup_steps": [
+    {
+      "action": "wait_ms",
+      "wait_ms": 2000
+    },
+    {
+      "action": "focus",
+      "selector": "input[name='email']"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='email']",
+      "value": "test3@example.com"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 500
+    },
+    {
+      "action": "focus",
+      "selector": "input[name='password']"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='password']",
+      "value": "testpass123"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 500
+    },
+    {
+      "action": "click",
+      "selector": "button[type='submit']"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 3000
+    }
+  ],
+  "assertions": [
+    {
+      "type": "url_contains",
+      "expected": "/dashboard",
+      "description": "Redirects to dashboard after login",
+      "purpose": "Verify login works"
+    },
+    {
+      "type": "text_contains",
+      "selector": "body",
+      "expected": "test3@example.com",
+      "description": "Shows logged-in user",
+      "purpose": "Dashboard renders correctly"
+    }
+  ]
+}

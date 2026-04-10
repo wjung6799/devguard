@@ -1,0 +1,251 @@
+{
+  "name": "Register Test Account",
+  "description": "Register a new test user and verify redirect to dashboard",
+  "total": 2,
+  "passed": 1,
+  "failed": 1,
+  "duration_ms": 5832,
+  "results": [
+    {
+      "name": "Should redirect to dashboard after register",
+      "purpose": "Verify auth flow completes and user lands on dashboard",
+      "pass": false,
+      "expected": "URL contains \"/dashboard\"",
+      "actual": "http://localhost:3000/register",
+      "steps": [
+        {
+          "type": "navigate",
+          "description": "Navigate to http://localhost:3000/register",
+          "status": "passed",
+          "duration_ms": 245,
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s0.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait for \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 31,
+          "action": "wait",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s1.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"Test User\" into \"input[name='name']\"",
+          "status": "passed",
+          "duration_ms": 42,
+          "action": "type",
+          "selector": "input[name='name']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s2.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"test@example.com\" into \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 32,
+          "action": "type",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s3.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"testpass123\" into \"input[name='password']\"",
+          "status": "passed",
+          "duration_ms": 65,
+          "action": "type",
+          "selector": "input[name='password']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s4.png"
+        },
+        {
+          "type": "setup",
+          "description": "Click on \"button[type='submit']\"",
+          "status": "passed",
+          "duration_ms": 61,
+          "action": "click",
+          "selector": "button[type='submit']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s5.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait 3000ms",
+          "status": "passed",
+          "duration_ms": 3054,
+          "action": "wait_ms",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s6.png"
+        },
+        {
+          "type": "assertion",
+          "description": "Should redirect to dashboard after register",
+          "status": "failed",
+          "duration_ms": 33,
+          "expected": "URL contains \"/dashboard\"",
+          "actual": "http://localhost:3000/register",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r0_s7.png"
+        }
+      ],
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_result_0.png"
+    },
+    {
+      "name": "Page has content",
+      "purpose": "Basic page render check",
+      "pass": true,
+      "expected": "element exists",
+      "actual": "found",
+      "steps": [
+        {
+          "type": "navigate",
+          "description": "Navigate to http://localhost:3000/register",
+          "status": "passed",
+          "duration_ms": 245,
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s0.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait for \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 31,
+          "action": "wait",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s1.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"Test User\" into \"input[name='name']\"",
+          "status": "passed",
+          "duration_ms": 42,
+          "action": "type",
+          "selector": "input[name='name']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s2.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"test@example.com\" into \"input[name='email']\"",
+          "status": "passed",
+          "duration_ms": 32,
+          "action": "type",
+          "selector": "input[name='email']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s3.png"
+        },
+        {
+          "type": "setup",
+          "description": "Type \"testpass123\" into \"input[name='password']\"",
+          "status": "passed",
+          "duration_ms": 65,
+          "action": "type",
+          "selector": "input[name='password']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s4.png"
+        },
+        {
+          "type": "setup",
+          "description": "Click on \"button[type='submit']\"",
+          "status": "passed",
+          "duration_ms": 61,
+          "action": "click",
+          "selector": "button[type='submit']",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s5.png"
+        },
+        {
+          "type": "setup",
+          "description": "Wait 3000ms",
+          "status": "passed",
+          "duration_ms": 3054,
+          "action": "wait_ms",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s6.png"
+        },
+        {
+          "type": "assertion",
+          "description": "Page has content",
+          "status": "passed",
+          "duration_ms": 32,
+          "expected": "element exists",
+          "actual": "found",
+          "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_r1_s7.png"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "type": "navigate",
+      "description": "Navigate to http://localhost:3000/register",
+      "status": "passed",
+      "duration_ms": 245,
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_0.png"
+    },
+    {
+      "type": "setup",
+      "description": "Wait for \"input[name='email']\"",
+      "status": "passed",
+      "duration_ms": 31,
+      "action": "wait",
+      "selector": "input[name='email']",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_1.png"
+    },
+    {
+      "type": "setup",
+      "description": "Type \"Test User\" into \"input[name='name']\"",
+      "status": "passed",
+      "duration_ms": 42,
+      "action": "type",
+      "selector": "input[name='name']",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_2.png"
+    },
+    {
+      "type": "setup",
+      "description": "Type \"test@example.com\" into \"input[name='email']\"",
+      "status": "passed",
+      "duration_ms": 32,
+      "action": "type",
+      "selector": "input[name='email']",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_3.png"
+    },
+    {
+      "type": "setup",
+      "description": "Type \"testpass123\" into \"input[name='password']\"",
+      "status": "passed",
+      "duration_ms": 65,
+      "action": "type",
+      "selector": "input[name='password']",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_4.png"
+    },
+    {
+      "type": "setup",
+      "description": "Click on \"button[type='submit']\"",
+      "status": "passed",
+      "duration_ms": 61,
+      "action": "click",
+      "selector": "button[type='submit']",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_5.png"
+    },
+    {
+      "type": "setup",
+      "description": "Wait 3000ms",
+      "status": "passed",
+      "duration_ms": 3054,
+      "action": "wait_ms",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_6.png"
+    },
+    {
+      "type": "assertion",
+      "description": "Should redirect to dashboard after register",
+      "status": "failed",
+      "duration_ms": 33,
+      "expected": "URL contains \"/dashboard\"",
+      "actual": "http://localhost:3000/register",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_7.png"
+    },
+    {
+      "type": "assertion",
+      "description": "Page has content",
+      "status": "passed",
+      "duration_ms": 32,
+      "expected": "element exists",
+      "actual": "found",
+      "screenshot_path": "screenshots/2026-04-10T07-45-31.435Z_browser_step_8.png"
+    }
+  ],
+  "url": "http://localhost:3000/register",
+  "test_spec_file": "register-test-account_0eae834ead.json",
+  "test_type": "browser",
+  "saved_at": "2026-04-10T07:45:31.437Z"
+}
