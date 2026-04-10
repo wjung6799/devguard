@@ -12,7 +12,7 @@ const CONFIG_DIR = join(
 );
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
 
-const DEFAULT_API_URL = "http://localhost:3000";
+const DEFAULT_API_URL = "https://devguard-landing.vercel.app";
 
 interface Config {
   apiKey: string;
