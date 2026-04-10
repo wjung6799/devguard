@@ -80,6 +80,27 @@ export function registerSearchEntries(server: McpServer) {
         }
       }
 
+      // Also search branch entries
+      const branchDir = join(project_path, ".devguard", "branches");
+      if (existsSync(branchDir)) {
+        const branchFiles = readdirSync(branchDir).filter((f) => f.endsWith(".md"));
+        for (const file of branchFiles) {
+          const content = readFileSync(join(branchDir, file), "utf-8");
+          if (!content.toLowerCase().includes(queryLower)) continue;
+
+          const branchName = file.replace(".md", "");
+          const lines = content.split("\n");
+          const matchingLines = lines.filter((l) =>
+            l.toLowerCase().includes(queryLower)
+          );
+          if (matchingLines.length > 0) {
+            matches.push(
+              `### branch: ${branchName}\n${matchingLines.slice(0, 5).join("\n")}`
+            );
+          }
+        }
+      }
+
       if (matches.length === 0) {
         return {
           content: [

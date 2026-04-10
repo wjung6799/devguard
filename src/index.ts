@@ -8,6 +8,9 @@ import { registerCatchMeUp } from "./tools/catch-me-up.js";
 import { registerSetup } from "./tools/setup.js";
 import { registerBranchMap } from "./tools/branch-map.js";
 import { registerDailyView } from "./tools/daily-view.js";
+import { registerImportEntries } from "./tools/import-entries.js";
+import { registerGetRules } from "./tools/get-rules.js";
+import { registerSearchEntries } from "./tools/search-entries.js";
 import { autoSetup } from "./utils/auto-setup.js";
 
 // Auto-setup on first run: adds .devdiary/ to .gitignore
@@ -26,6 +29,9 @@ registerCatchMeUp(server);
 registerSetup(server);
 registerBranchMap(server);
 registerDailyView(server);
+registerImportEntries(server);
+registerGetRules(server);
+registerSearchEntries(server);
 
 async function main() {
   const transport = new StdioServerTransport();

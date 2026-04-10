@@ -2,50 +2,15 @@
 
 ## Vision
 
-DevGuard starts as a free, local-first MCP tool that solves context loss for individual developers. It evolves into an **LLM-powered personal knowledge base for dev work** — inspired by Andrej Karpathy's knowledge base architecture and prompt-as-code principles — where raw diary entries are compiled into a searchable, self-improving wiki that the LLM reads directly (no RAG needed).
+DevGuard is a free, local-first MCP tool that solves context loss for individual developers. It captures what you did, why, and what's next — then serves that context back intelligently so the LLM always knows where you left off.
 
 The premium tiers extend this into cloud-synced personal history and team-wide context sharing — turning DevGuard from a personal memory tool into a collaboration layer.
 
 ---
 
-## Architecture — The Knowledge Pipeline
+## Architecture — 3-Tier Context Loading
 
-Inspired by Karpathy's LLM-powered knowledge base system:
-
-```
-STAGE 1              STAGE 2              STAGE 3             STAGE 4            STAGE 5
-DATA INGEST  →    LLM COMPILATION  →    THE WIKI     →    Q&A / QUERYING  →  OUTPUT FORMATS
-                                                                    
-diary entries        reads,            compiled             ask_diary           .md (handoff)
-git commits          summarizes,       knowledge base       catch_me_up         PR descriptions
-branch context       compiles          ~topics, decisions   search_entries      branch_map HTML
-manual notes                           ~patterns, issues                       daily_view HTML
-                                                                    
-                         ┌──── self-improving loop ────┐
-                         │                             │
-                    STAGE 6                        STAGE 3
-                    LINTING                        THE WIKI
-                    • find inconsistencies         (updated)
-                    • fill gaps
-                    • find connections
-                    • suggest topics
-```
-
-### Key Insight: No RAG Required
-
-Like Karpathy's system, DevGuard doesn't need vector search at the local level. The LLM **reads its own compiled index** — a structured wiki generated from raw diary entries. This keeps the architecture simple:
-
-- **Raw entries** = `.devguard/entries/` and `.devguard/branches/` (what exists today)
-- **Compiled wiki** = `.devguard/wiki/` (new — LLM-generated summaries, topic pages, decision logs)
-- **The LLM reads the wiki index** to answer questions, not embeddings
-
-Vector search only becomes necessary at cross-project or team scale (Premium).
-
----
-
-## Context Loading — The 3-Tier System
-
-Inspired by the "Prompt Diet" approach (프롬프트 다이어트) — treating prompts as code with DRY principles and lazy loading:
+Treating prompts as code with DRY principles and lazy loading — the LLM gets exactly the context it needs, nothing more:
 
 ### Tier 1 — Always Loaded (~minimal tokens)
 - Project identity (name, branch, last commit)
@@ -82,9 +47,6 @@ Everything runs locally. No account, no network, no cost.
 | `daily_view` — calendar dashboard | Shipped |
 | `search_entries` — keyword + date range search | Built, not wired up |
 | `setup` — auto-config for CLAUDE.md / .cursorrules | Shipped |
-| `compile_wiki` — LLM compiles entries into wiki pages | Planned |
-| `lint_diary` — find gaps, inconsistencies, suggest connections | Planned |
-| `ask_diary` — Q&A over compiled wiki (no RAG) | Planned |
 
 **Storage:** `.devguard/` directory, gitignored, markdown files.
 
@@ -100,7 +62,6 @@ Cloud-synced diary with cross-project intelligence. Still works offline — sync
 
 - **Cloud sync** — entries + wiki replicate to cloud, accessible from any machine
 - **Cross-project search** — "when have I solved this before?" across all your projects
-- **Cross-project wiki** — compiled knowledge base that spans multiple repos
 - **`generate_handoff`** — produce a shareable context summary for a branch, PR, or project
 - **PR description generation** — auto-generate PR body from branch diary entries
 - **Export** — markdown, JSON, or PDF export of diary history
@@ -110,7 +71,7 @@ Cloud-synced diary with cross-project intelligence. Still works offline — sync
 
 - User accounts + auth
 - Cloud storage backend (entries + wiki sync from local `.devguard/`)
-- Vector database for cross-project semantic search (scale justifies it here)
+- Vector database for cross-project semantic search
 - API service for cross-project queries
 
 ---
@@ -122,7 +83,6 @@ Shared context across a team. Every team member's diary entries feed into a coll
 #### Features
 
 - **Shared project diaries** — team members see each other's entries for shared repos
-- **Team wiki** — compiled from all team members' entries, auto-maintained
 - **Handoff workflows** — assign context to a teammate picking up your branch
 - **Team-wide search** — "has anyone on the team dealt with this?"
 - **Activity dashboard** — who's working on what, across branches and projects
@@ -146,21 +106,12 @@ Shared context across a team. Every team member's diary entries feed into a coll
 
 ```
 .devguard/
-├── entries/          # Raw daily entries (Stage 1 — data ingest)
+├── entries/          # Raw daily entries
 │   ├── 2026-03-17.md
 │   └── 2026-03-30.md
 ├── branches/         # Raw branch entries
 │   ├── daily-view.md
 │   └── feature-auth.md
-├── wiki/             # LLM-compiled knowledge base (Stage 3 — the wiki)
-│   ├── index.md      # Topic index with one-line summaries (Tier 1 context)
-│   ├── decisions.md  # Compiled decision log
-│   ├── issues.md     # Recurring issues + resolutions
-│   ├── patterns.md   # Observed patterns + conventions
-│   └── topics/       # Per-topic deep pages
-│       ├── auth.md
-│       ├── npm-publish.md
-│       └── branch-storage.md
 ├── branch-map.html   # Generated visualization
 └── daily-view.html   # Generated calendar
 ```
@@ -170,8 +121,7 @@ Shared context across a team. Every team member's diary entries feed into a coll
 ```
 Local (.devguard/)  →  Sync Agent  →  Cloud API  →  Storage + Vector DB
                                             ↓
-                                     Web Dashboard
-                                     Team Queries
+                                     Web Dashboard (platform/)
                                      Cross-Project Search
 ```
 
@@ -179,15 +129,13 @@ Local (.devguard/)  →  Sync Agent  →  Cloud API  →  Storage + Vector DB
 
 | Component | Purpose | Candidates |
 |-----------|---------|------------|
-| Wiki compiler | LLM summarizes entries → wiki pages | Built into MCP tool |
-| Linter | LLM reviews wiki for gaps/connections | Built into MCP tool |
-| Auth | User accounts, API keys (Premium) | Clerk, Auth0, custom JWT |
-| Cloud storage | Entry + wiki persistence (Premium) | PostgreSQL + S3 |
+| Auth | User accounts, API keys (Premium) | Custom session auth (built) |
+| Cloud storage | Entry persistence (Premium) | PostgreSQL + S3 |
 | Vector DB | Cross-project semantic search (Premium) | pgvector, Pinecone |
 | Sync agent | Local ↔ cloud replication (Premium) | Background process in MCP server |
 | API | Query, search, handoff endpoints (Premium) | Node / Hono |
 | Billing | Subscription management (Premium) | Stripe |
-| Web dashboard | Team activity, search UI (Premium) | React / Next.js |
+| Web dashboard | Team activity, search UI (Premium) | Next.js (scaffold built in `platform/`) |
 
 ### Data Model (Premium)
 
@@ -205,8 +153,7 @@ Organization
 Project
 ├── id, name, git_remote_url
 ├── org_id (nullable — personal projects have no org)
-├── entries[]
-└── wiki_pages[]
+└── entries[]
 
 Entry
 ├── id, project_id, author_id
@@ -215,62 +162,48 @@ Entry
 ├── embedding (vector) — Premium only
 ├── visibility (private | project | org)
 └── tags[]
-
-WikiPage
-├── id, project_id
-├── topic, content
-├── source_entries[] (which entries compiled into this)
-├── last_compiled, stale (boolean)
-└── embedding (vector) — Premium only
 ```
 
 ---
 
 ## Sequencing
 
-### Phase 1 — Complete the Free Tier + Wiki Foundation
+### Phase 1 — Complete the Free Tier
 - Wire up `search_entries` in index.ts
-- Build `compile_wiki` — LLM reads all entries, generates topic pages + index
-- Implement tiered context loading in `catch_me_up` (Tier 1 always, Tier 2 contextual)
+- Implement 3-tier context loading in `catch_me_up` (Tier 1 always, Tier 2 contextual)
 - Ship to npm as v0.4.0
 - Validate adoption and gather feedback
 
-### Phase 2 — Self-Improving Loop + Local Intelligence
-- Build `lint_diary` — find gaps, inconsistencies, suggest connections
-- Build `ask_diary` — Q&A over compiled wiki (LLM reads its own index)
+### Phase 2 — Handoff + PR Tools
 - Build `generate_handoff` — shareable context summaries
-- PR description generation from branch diary
-- Self-improving loop: linter findings feed back into wiki compilation
+- PR description generation from branch diary entries
 - Ship as v0.5.0
 
 ### Phase 3 — Individual Premium
-- Build auth + cloud sync (entries + wiki)
-- Cross-project wiki + search (vector DB justified at this scale)
+- Cloud sync (entries replicate from local `.devguard/`)
+- Cross-project search (vector DB)
 - Export formats (markdown, JSON, PDF)
+- Wire MCP server to sync diary data into platform
 - Launch individual tier
 
 ### Phase 4 — Team Premium
-- Org/team model + permissions
-- Team wiki (compiled from all members' entries)
+- Org/team model + permissions (extend existing platform schema)
 - Handoff workflows + notifications
-- Team dashboard (web app)
+- Team dashboard
 - Launch team tier
 
 ### Phase 5 — Expansion
-- IDE plugins (VS Code panel showing wiki context)
+- IDE plugins (VS Code panel showing diary context)
 - GitHub App (auto-comment diary context on PRs)
 - Slack integration (morning briefing in channel)
 - Analytics (coding patterns, productivity insights)
-- Future: synthetic data + fine-tuning → project knowledge baked into model weights
 
 ---
 
 ## Open Questions
 
-- **Wiki compilation trigger:** On every `write_entry`? Periodic? Manual `compile_wiki` command? Incremental (only re-compile when new entries exist)?
-- **Tier 2 relevance:** How to determine which wiki pages are "related to files being touched"? File path matching? Topic keywords from git diff?
-- **Pricing:** What's the right price point? $5/mo individual, $10/user/mo team?
+- **Tier 2 relevance:** How to determine which entries are contextually relevant? File path matching from git diff? Branch name? Recency?
+- **Pricing:** What's the right price point? $5/mo individual, $12/user/mo team?
 - **Offline-first:** How aggressive should cloud sync be? Real-time vs. periodic vs. manual?
 - **Privacy:** Some entries may contain sensitive decisions/issues — how to handle visibility defaults?
-- **Self-improving loop frequency:** How often should the linter run? Every session start? Weekly?
-- **Design the team model first?** Building org/team/permissions from day one avoids a rewrite later, but adds upfront complexity. Individual-as-team-of-one is cleaner long-term.
+- **Team model timing:** Adding Organization model to the platform schema now (even unused) avoids a rewrite later. Team-of-one pattern keeps it clean.
