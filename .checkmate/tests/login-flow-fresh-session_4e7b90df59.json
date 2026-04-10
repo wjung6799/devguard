@@ -1,0 +1,70 @@
+{
+  "type": "browser",
+  "url": "http://localhost:3000/login",
+  "name": "Login Flow - Fresh Session",
+  "description": "Login test with a fresh browser session",
+  "setup_steps": [
+    {
+      "action": "wait",
+      "selector": "form"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 1000
+    },
+    {
+      "action": "click",
+      "selector": "input[name='email']"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 200
+    },
+    {
+      "action": "clear",
+      "selector": "input[name='email']"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='email']",
+      "value": "test3@example.com"
+    },
+    {
+      "action": "click",
+      "selector": "input[name='password']"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 200
+    },
+    {
+      "action": "clear",
+      "selector": "input[name='password']"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='password']",
+      "value": "testpass123"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 500
+    },
+    {
+      "action": "click",
+      "selector": "button[type='submit']"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 4000
+    }
+  ],
+  "assertions": [
+    {
+      "type": "url_contains",
+      "expected": "/dashboard",
+      "description": "Redirects to dashboard after login",
+      "purpose": "Verify login works"
+    }
+  ]
+}

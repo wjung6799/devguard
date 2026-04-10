@@ -1,0 +1,55 @@
+{
+  "type": "browser",
+  "url": "http://localhost:3000/register",
+  "name": "Register + Dashboard Flow",
+  "description": "Register a new user and verify dashboard loads correctly",
+  "setup_steps": [
+    {
+      "action": "wait",
+      "selector": "input[name='email']"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='name']",
+      "value": "Test User"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='email']",
+      "value": "test3@example.com"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='password']",
+      "value": "testpass123"
+    },
+    {
+      "action": "click",
+      "selector": "button[type='submit']"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 3000
+    }
+  ],
+  "assertions": [
+    {
+      "type": "url_contains",
+      "expected": "/dashboard",
+      "description": "Redirects to dashboard after register",
+      "purpose": "Verify auth flow completes"
+    },
+    {
+      "type": "text_contains",
+      "selector": "body",
+      "expected": "test3@example.com",
+      "description": "Dashboard shows user email",
+      "purpose": "Verify user is logged in and dashboard renders"
+    },
+    {
+      "type": "console_no_errors",
+      "description": "No console errors",
+      "purpose": "No runtime errors after login"
+    }
+  ]
+}

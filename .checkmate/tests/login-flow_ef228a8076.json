@@ -1,0 +1,50 @@
+{
+  "type": "browser",
+  "url": "http://localhost:3000/login",
+  "name": "Login Flow",
+  "description": "Test logging in with the account we just created",
+  "setup_steps": [
+    {
+      "action": "wait",
+      "selector": "input[name='email']"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='email']",
+      "value": "test3@example.com"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='password']",
+      "value": "testpass123"
+    },
+    {
+      "action": "click",
+      "selector": "button[type='submit']"
+    },
+    {
+      "action": "wait_ms",
+      "wait_ms": 3000
+    }
+  ],
+  "assertions": [
+    {
+      "type": "url_contains",
+      "expected": "/dashboard",
+      "description": "Redirects to dashboard after login",
+      "purpose": "Verify login works for existing users"
+    },
+    {
+      "type": "text_contains",
+      "selector": "body",
+      "expected": "test3@example.com",
+      "description": "Shows logged-in user",
+      "purpose": "Dashboard renders with correct user"
+    },
+    {
+      "type": "console_no_errors",
+      "description": "No errors",
+      "purpose": "Clean page load"
+    }
+  ]
+}
